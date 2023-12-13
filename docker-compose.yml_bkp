@@ -1,0 +1,39 @@
+
+
+version: '3.8'
+
+services:
+  webapi:
+    build:
+      context: ./WebAPI/WebAPI
+      dockerfile: Dockerfile
+    ports:
+      - "50306:50306"
+    networks:
+      - mynetwork
+
+  angularapp:
+    build:
+      context: ./AngularCRUD
+      dockerfile: Dockerfile
+    ports:
+      - "4200:4200"
+    depends_on:
+      - webapi
+    networks:
+      - mynetwork
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    ports:
+      - 8002:1433
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=password@12345#
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge
+
